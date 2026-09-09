@@ -10,7 +10,7 @@
     "dev": "npm run dev --workspaces --if-present",
     "dev:api": "npm run dev -w @n26/api",
     "dev:web": "npm run dev -w @n26/web",
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm run build -w @n26/shared && npm run build -w @n26/api && npm run build -w @n26/web",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "db:migrate": "npm run db:migrate -w @n26/api"
