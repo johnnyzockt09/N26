@@ -1,0 +1,32 @@
+# N26 Minecraft Banking – Variante C auf CasaOS (Docker)
+# Eine URL: Webseite + API + SQLite + RCON (lokal) – kein Netlify, keine
+# externe Datenbank. Einziger Dienst, immer aktiv (restart: unless-stopped).
+#
+# Setup:
+#   git clone <repo-url> n26
+#   cd n26
+#   cp .env.example .env   # dann .env editieren (RCON_PASSWORD usw.)
+#   docker compose -f docker-compose.casaos.yml up -d --build
+#   oder direkt: bash scripts/deploy-server.sh
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: n26-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: sqlite:./data/n26.db
+    volumes:
+      - ./data:/workspace/data
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s

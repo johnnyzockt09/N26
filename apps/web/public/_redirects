@@ -1,0 +1,8 @@
+# Netlify routing.
+#
+# The API runs as ONE serverless function (netlify/functions/api.mjs).
+# /api/* requests are internally rewritten to that function (200 rewrite
+# keeps method + body). Everything else is served as a static file or falls
+# back to index.html for client-side routes.
+/api/*  /.netlify/functions/api  200
+/*      /index.html              200

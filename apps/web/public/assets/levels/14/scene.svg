@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="360" viewBox="0 0 720 360">
+  <title>SEKTOR-14 / BILDBAND-AUSSCHNITT</title>
+  <desc>Gespiegelter Ausdruck eines Funkprotokolls.</desc>
+  <rect width="720" height="360" fill="#0c0f14"/>
+  <g font-family="monospace">
+    <text x="24" y="30" font-size="13" fill="#3f4c61">SEKTOR-14 / BILDBAND-AUSSCHNITT</text>
+    <text x="24" y="342" font-size="12" fill="#33404f">SCAN 8812-C · ORIGINAL IM GLAS NEGATIV</text>
+  </g>
+  <g stroke="#1d2530" stroke-width="1" fill="none">
+    <rect x="24" y="52" width="672" height="276"/>
+    <line x1="24" y1="52" x2="696" y2="328"/>
+    <line x1="696" y1="52" x2="24" y2="328"/>
+  </g>
+  <text x="40" y="200" font-size="44" fill="#d7e6ef" transform="translate(680 0) scale(-1 1)" text-anchor="end">FERNGESPRÄCH</text>
+  <rect x="24" y="196" width="672" height="2" fill="#1d2530"/>
+  <text x="40" y="300" font-size="20" fill="#4b5b70" transform="translate(680 0) scale(-1 1)" text-anchor="end">SEKTOR-14 · AUDIO-LOG</text>
+</svg>

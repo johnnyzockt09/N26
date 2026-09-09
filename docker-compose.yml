@@ -1,0 +1,87 @@
+version: "3.9"
+
+# N26 Minecraft Banking System - Docker Compose (Raspberry Pi deployment)
+#
+# Runs three services:
+#   - web:      static React SPA served by nginx (the only publicly exposed service)
+#   - api:      Fastify backend (reached by nginx via reverse proxy, NOT public)
+#   - database: PostgreSQL (internal only)
+#
+# The API needs network access to the Minecraft server's RCON port. On the Pi,
+# the Minecraft server usually runs on the same host, so api can reach it via
+# the Docker bridge gateway (the host). Set RCON_HOST=host.docker.internal
+# or the host's LAN IP in .env. See docs/raspberry-pi-deployment.md.
+
+services:
+  database:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-n26}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-n26_bank}
+    volumes:
+      - n26_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-n26} -d ${POSTGRES_DB:-n26_bank}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - n26_internal
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-n26}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@database:5432/${POSTGRES_DB:-n26_bank}
+      SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET in .env}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN:-}
+      COOKIE_SAMESITE: ${COOKIE_SAMESITE:-lax}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:5173}
+      PUBLIC_URL: ${PUBLIC_URL:-https://your-playit-domain.playit.gg}
+      RCON_HOST: ${RCON_HOST:-host.docker.internal}
+      RCON_PORT: ${RCON_PORT:-25575}
+      RCON_PASSWORD: ${RCON_PASSWORD:?set RCON_PASSWORD in .env}
+      ADMIN_MC_USERNAMES: ${ADMIN_MC_USERNAMES:-Johnnyzockt09}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-60000}
+      RATE_LIMIT_MAX_AUTH: ${RATE_LIMIT_MAX_AUTH:-10}
+      RATE_LIMIT_MAX_API: ${RATE_LIMIT_MAX_API:-60}
+      VERIFICATION_TTL_SECONDS: ${VERIFICATION_TTL_SECONDS:-900}
+      SESSION_TTL_SECONDS: ${SESSION_TTL_SECONDS:-604800}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      # Expose the API only to the host/daemon, never publicly.
+      # nginx (web) proxies to api:3000 via the compose network; the port
+      # below is optional and for debugging on the Pi itself.
+      - "127.0.0.1:3000:3000"
+    networks:
+      - n26_internal
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+    networks:
+      - n26_internal
+
+volumes:
+  n26_db:
+
+networks:
+  n26_internal:
+    driver: bridge

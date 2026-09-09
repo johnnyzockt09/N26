@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Coverage
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite
+apps/web/.vite/
+
+# Test artifacts
+.cache/
+.temp/
+
+# Local runtime data (SQLite etc.)
+data/
+*.db
+*.db-journal
+
+# Build artifacts / snapshots
+export/
+
+# Minecraft server files (never commit real server data)
+datapack/**/world/
+servers/
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp

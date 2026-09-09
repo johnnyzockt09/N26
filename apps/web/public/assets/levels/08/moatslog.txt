@@ -1,0 +1,3 @@
+[ 0000-00-00T00:00:00Z ] BOOT: kernal stabil.  ->  serial: no valid login detected
+[ 0001-00-00T00:00:00Z ] route /abkehrtxob: 404 - kein handler
+retsaM

@@ -1,0 +1,49 @@
+{
+  "name": "@n26/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:migrate": "tsx scripts/migrate.ts"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^9.0.1",
+    "@fastify/cors": "^9.0.1",
+    "@fastify/helmet": "^11.1.1",
+    "@fastify/multipart": "^8.3.0",
+    "@fastify/rate-limit": "^9.1.0",
+    "@n26/shared": "*",
+    "argon2": "^0.41.1",
+    "better-sqlite3": "^11.3.0",
+    "dotenv": "^17.4.2",
+    "fastify": "^4.28.1",
+    "fastify-plugin": "^4.5.1",
+    "pg": "^8.12.0",
+    "rcon-client": "^4.2.1",
+    "zod": "^3.23.8"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./netlify": {
+      "types": "./dist/netlify.d.ts",
+      "import": "./dist/netlify.js"
+    }
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^22.5.4",
+    "@types/pg": "^8.11.6",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^2.1.1"
+  }
+}

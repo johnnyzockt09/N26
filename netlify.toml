@@ -1,0 +1,40 @@
+# ============================================================
+# Netlify configuration - N26 Minecraft Banking
+# ============================================================
+#
+# Netlify hosts BOTH the React frontend AND the API.
+# - Frontend: apps/web -> dist (published to apps/web/dist)
+# - API:      the whole Fastify backend runs as ONE serverless function
+#             (netlify/functions/api.mjs, code in apps/api) and is reached
+#             via the /api/* rewrite from apps/web/public/_redirects.
+#
+# Required Netlify environment variables (Site settings -> Environment
+# variables -> !! Backend env vars have "-" (not VITE_) prefix !!):
+#   DATABASE_URL        Postgres URL (e.g. Neon/Supabase free tier)
+#   SESSION_SECRET      long random hex
+#   RCON_HOST           public IP of the Minecraft/RPi server (RCON reachable)
+#   RCON_PORT           25575
+#   RCON_PASSWORD       the RCON password
+#   WEB_ORIGIN          this site's URL (e.g. https://n26.netlify.app)
+#   COOKIE_SAMESITE     lax (same-site) or none (cross-site)
+#   ADMIN_MC_USERNAMES  comma-separated MC names whose linked account becomes admin
+#   MINECRAFT_SERVER_ADDRESS / MINECRAFT_SERVER_PORT / PLAYIT_PUBLIC_ADDRESS
+#   NODE_ENV = production
+
+[build]
+  base = "/"
+  command = "npm run build -w @n26/shared && npm run build -w @n26/api && npm run build -w @n26/web"
+  publish = "apps/web/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  external_node_modules = ["@n26/api", "@n26/shared", "better-sqlite3", "argon2"]
+
+# Frontend talks to the API on the SAME origin (relative /api/* -> function),
+# so no VITE_API_URL is needed. Leave it empty/unsure here.
+[context.production.environment]
+  VITE_API_URL = ""
